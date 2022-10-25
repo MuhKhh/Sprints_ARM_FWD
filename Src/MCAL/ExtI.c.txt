@@ -1,0 +1,174 @@
+#include "../include/STD_TYPES.h"
+#include "../include/BIT_MATH.h"
+
+#include "../include/EXTI_interface.h"
+#include "../include/EXTI_private.h"
+#include "../include/EXTI_config.h"
+
+#include "../include/GPIO_interface.h"
+
+static void (*GA_pfCallBack[23])(void) = {NULL};
+
+enuErrorState_t MEXTI_enuErrorState_tSelectEXTIxPort(enuEXTILine_t A_enuEXTILine, enuEXTIPinPort_t A_enuEXTIPinPort) {
+	enuErrorState_t L_retValue = STD_OK;
+	
+	/* Getting the index of the array */
+	u8 L_u8SYSCFGIndex = A_enuEXTILine / 4;
+	
+	u8 L_u8EXTILineShiftingValue = 4 * (A_enuEXTILine % 4);
+	
+	if(A_enuEXTILine <= EXTI22_LINE && A_enuEXTIPinPort <= EXTI_PORTB) {
+		SYSCFG_EXTICR_ARRAY[L_u8SYSCFGIndex] |= A_enuEXTIPinPort << L_u8EXTILineShiftingValue;
+	}
+	else {
+		L_retValue = STD_NOK;
+	}
+	
+	return L_retValue;
+}
+
+enuErrorState_t MEXTI_enuErrorState_tSetSenseControl(enuEXTILine_t A_enuEXTILine, enuSenseControl_t A_enuSenseControl) {
+	enuErrorState_t L_retValue = STD_OK;
+	
+	/* Validting inupt arguments */
+	if(A_enuEXTILine <= EXTI22_LINE) {
+		switch(A_enuSenseControl) {
+			case RISING_EDGE:
+				SET_BIT(MEXTI->RTSR, A_enuEXTILine);
+				break;
+				
+			case FALLING_EDGE:
+				SET_BIT(MEXTI->FTSR, A_enuEXTILine);
+				break;
+				
+			case ON_CHANGE:
+				SET_BIT(MEXTI->RTSR, A_enuEXTILine);
+				SET_BIT(MEXTI->FTSR, A_enuEXTILine);
+				break;
+		}
+	}
+	else {
+		L_retValue = STD_NOK;
+	}
+	
+	return L_retValue;
+}
+
+enuErrorState_t MEXTI_enuErrorState_tInterruptEnable(enuEXTILine_t A_enuEXTILine) {
+	enuErrorState_t L_retValue = STD_OK;
+	
+	if(A_enuEXTILine <= EXTI22_LINE) {
+		SET_BIT(MEXTI->IMR, A_enuEXTILine);
+	}
+	else {
+		L_retValue = STD_NOK;
+	}
+	
+	return L_retValue;
+}
+
+enuErrorState_t MEXTI_enuErrorState_tInterruptDisable(enuEXTILine_t A_enuEXTILine) {
+	enuErrorState_t L_retValue = STD_OK;
+	
+	if(A_enuEXTILine <= EXTI22_LINE) {
+		CLR_BIT(MEXTI->IMR, A_enuEXTILine);
+	}
+	else {
+		L_retValue = STD_NOK;
+	}
+	
+	return L_retValue;
+}
+
+enuErrorState_t MEXTI_enuErrorState_tEventEnable(enuEXTILine_t A_enuEXTILine) {
+	enuErrorState_t L_retValue = STD_OK;
+	
+	if(A_enuEXTILine <= EXTI22_LINE) {
+		SET_BIT(MEXTI->EMR, A_enuEXTILine);
+	}
+	else {
+		L_retValue = STD_NOK;
+	}
+	
+	return L_retValue;
+}
+
+enuErrorState_t MEXTI_enuErrorState_tEventDisable(enuEXTILine_t A_enuEXTILine) {
+	enuErrorState_t L_retValue = STD_OK;
+	
+	if(A_enuEXTILine <= EXTI22_LINE) {
+		CLR_BIT(MEXTI->EMR, A_enuEXTILine);
+	}
+	else {
+		L_retValue = STD_NOK;
+	}
+	
+	return L_retValue;
+}
+
+
+enuErrorState_t MEXTI_enuErrorState_tSetCallBack(enuEXTILine_t A_enuEXTILine, void (*A_pfCallBack)(void)) {
+	enuErrorState_t L_retValue = STD_OK;
+	
+	/* Validting input arguments */
+	if( ( A_enuEXTILine <= EXTI22_LINE ) && ( A_pfCallBack != NULL) ) {
+		GA_pfCallBack[A_enuEXTILine] = A_pfCallBack;
+	}
+	else {
+		L_retValue = STD_NOK;
+	}
+	
+	return STD_NOK;
+}
+
+enuErrorState_t MEXTI_enuErrorState_tSoftwareTrigger(enuEXTILine_t A_enuEXTILine) {
+	enuErrorState_t L_retValue = STD_OK;
+	
+	/* Validting input arguments */
+	if(A_enuEXTILine <= EXTI22_LINE) {
+		SET_BIT(MEXTI->SWIER, A_enuEXTILine);
+	}
+	else {
+		L_retValue = STD_NOK;
+	}
+	
+	return STD_NOK;
+}
+
+/* ISRs */
+
+void EXTI0_IRQHandler(void) {
+	MGPIO_vSetPinVal(PORTA, PIN1, PIN_HIGH);
+	if(GA_pfCallBack[EXTI0_LINE] != NULL) {
+		GA_pfCallBack[EXTI0_LINE](); // calling the function for the EXTI0
+	}
+
+	SET_BIT(MEXTI->PR, EXTI0_LINE);
+}
+
+void EXTI1_IRQHandler(void) {
+	if(GA_pfCallBack[EXTI1_LINE] != NULL) {
+		GA_pfCallBack[EXTI1_LINE](); // calling the function for the EXTI1
+		GA_pfCallBack[EXTI1_LINE](); // calling the function for the EXTI1
+	}
+	SET_BIT(MEXTI->PR, EXTI1_LINE);
+}
+
+void EXTI2_IRQHandler(void) {
+	if(GA_pfCallBack[EXTI2_LINE] != NULL) {
+		GA_pfCallBack[EXTI2_LINE](); // calling the function for the EXTI2
+		GA_pfCallBack[EXTI2_LINE](); // calling the function for the EXTI2
+	}
+	SET_BIT(MEXTI->PR, EXTI2_LINE);
+}
+
+void EXTI3_IRQHandler(void) {
+	if(GA_pfCallBack[EXTI3_LINE] != NULL) {
+		GA_pfCallBack[EXTI3_LINE](); // calling the function for the EXTI2
+		GA_pfCallBack[EXTI3_LINE](); // calling the function for the EXTI2
+	}
+	SET_BIT(MEXTI->PR, EXTI3_LINE);
+}
+
+
+

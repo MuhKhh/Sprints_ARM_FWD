@@ -1,0 +1,107 @@
+#ifndef MNVIC_INTERFACE_H
+#define MNVIC_INTERFACE_H
+
+typedef enum {
+	WWDT               = 0 ,
+	EXTI16             = 1 ,
+	PVD                = 1 ,
+	EXTI21             = 2 ,
+	TAMP_STAMP         = 2 ,
+	EXTI22             = 3 ,
+	RTC_WKUP           = 3 ,
+	FLASH              = 4 ,
+	RCC                = 5 ,
+	EXTI0              = 6 ,
+	EXTI1              = 7 ,
+	EXTI2              = 8 ,
+	EXTI3              = 9 ,
+	EXTI4              = 10,
+	DMA1_Stream0       = 11,
+	DMA1_Stream1       = 12,
+	DMA1_Stream2       = 13,
+	DMA1_Stream3       = 14,
+	DMA1_Stream4       = 15,
+	DMA1_Stream5       = 16,
+	DMA1_Stream6       = 17,
+	ADC                = 18,
+	EXTI9_5            = 23,
+	TIM1_BRK_TIM9      = 24,
+	TIM1_UP_TIM10      = 25,
+	TIM1_TRG_COM_TIM11 = 26,
+	TIM1_CC            = 27,
+	TIM2               = 28,
+	TIM3               = 29,
+	TIM4               = 30,
+	I2C1_EV            = 31,
+	I2C1_ER            = 32,
+	I2C2_EV            = 33,
+	I2C2_ER            = 34,
+	SPI1               = 35,
+	SPI2               = 36,
+	USART1             = 37,
+	USART2             = 38,
+	EXTI15_10          = 40,
+	EXTI17             = 41,
+	RTC_Alarm          = 41,
+	EXTI18             = 42,
+	OTG_FS_WKUP        = 42,
+	DMA1_Stream7       = 47,
+	SDIO               = 49,
+	TIM5               = 50,
+	SPI3               = 51,
+	DMA2_Stream0       = 56,
+	DMA2_Stream1       = 57,
+	DMA2_Stream2       = 58,
+	DMA2_Stream3       = 59,
+	DMA2_Stream4       = 60,
+	OTG_FS             = 67,
+	DMA2_Stream5       = 68,
+	DMA2_Stream6       = 69,
+	DMA2_Stream7       = 70,
+	USART6             = 71,
+	I2C3_EV            = 72,
+	I2C3_ER            = 73,
+	FPU                = 81,
+	SPI4               = 84,
+} enuIRQn_t;
+
+typedef enum {
+	PRI_16_GROUP_01_SUB = 0x05FA0300,
+	PRI_08_GROUP_02_SUB = 0x05FA0400,
+	PRI_04_GROUP_04_SUB = 0x05FA0500,
+	PRI_02_GROUP_08_SUB = 0x05FA0600,
+	PRI_01_GROUP_16_SUB = 0x05FA0700,
+} enuSystemGroupPri_t;
+
+/* Enables an interrupt or exception. */
+enuErrorState_t MNVIC_enuErrorState_tSetSystemGroupPriority(enuSystemGroupPri_t A_enuSystemGroupPri);
+
+/* Enables an interrupt or exception. */
+enuErrorState_t MNVIC_EnableIRQ(enuIRQn_t A_enuIRQn);
+ 
+/* Disables an interrupt or exception. */
+enuErrorState_t MNVIC_DisableIRQ(enuIRQn_t A_enuIRQn);
+
+/* Sets the pending status of interrupt or exception to 1. */
+enuErrorState_t MNVIC_SetPendingIRQ(enuIRQn_t A_enuIRQn); 
+
+/* Clears the pending status of interrupt or exception to 0.
+ *
+ *
+ *
+ *
+ * */
+enuErrorState_t MNVIC_ClearPendingIRQ(enuIRQn_t A_enuIRQn);
+
+/* Reads the pending status of interrupt or exception. 
+ * This function returns nonzero value if the pending status is set to 1. */ 
+enuErrorState_t MNVIC_GetPendingIRQ(enuIRQn_t A_enuIRQn, u32 *A_pu32PendingIRQValue);
+
+/* Sets the priority of an interrupt or exception with configurable priority level to 1. */
+enuErrorState_t MNVIC_SetPriority(enuIRQn_t A_enuIRQn, u8 A_u8GroupPri, u8 A_u8SubPri);
+
+/* Reads the priority of an interrupt or exception with configurable priority level. 
+ * This function return the current priority level. */
+enuErrorState_t MNVIC_GetPriority(enuIRQn_t A_enuIRQn, u8 *A_pu8GroupPri, u8 *A_pu8SubPri);
+
+#endif // MNVIC_INTERFACE_H

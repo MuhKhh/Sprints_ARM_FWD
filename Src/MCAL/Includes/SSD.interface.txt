@@ -1,0 +1,69 @@
+#ifndef SSD_INTERFACE_H
+#define SSD_INTERFACE_H
+
+#define ENABLE 			1
+#define DISABLE 		2
+
+#define SSD1	        ENABLE
+#define SSD2	        ENABLE
+
+#define SSD1_PORT_PINA	  PORTB
+#define SSD1_PORT_PINB	  PORTB
+#define SSD1_PORT_PINC	  PORTB
+#define SSD1_PORT_PIND	  PORTB
+#define SSD1_PORT_PINE	  PORTB
+#define SSD1_PORT_PINF	  PORTB
+#define SSD1_PORT_PING	  PORTB
+#define SSD1_PORT_PINDot  PORTB
+
+#define SSD2_PORT_PINA	  PORTA
+#define SSD2_PORT_PINB	  PORTA
+#define SSD2_PORT_PINC	  PORTA
+#define SSD2_PORT_PIND	  PORTA
+#define SSD2_PORT_PINE	  PORTA
+#define SSD2_PORT_PINF	  PORTA
+#define SSD2_PORT_PING	  PORTC
+#define SSD2_PORT_PINDot  PORTC
+
+
+#define SSD1_PINA	    PIN7
+#define SSD1_PINB	    PIN8
+#define SSD1_PINC	    PIN9
+#define SSD1_PIND	    PIN10
+#define SSD1_PINE	    PIN12
+#define SSD1_PINF	    PIN13
+#define SSD1_PING	    PIN14
+#define SSD1_PINDot	    PIN15
+
+#define SSD2_PINA		PIN8
+#define SSD2_PINB		PIN9
+#define SSD2_PINC		PIN10
+#define SSD2_PIND		PIN11
+#define SSD2_PINE		PIN12
+#define SSD2_PINF		PIN15
+#define SSD2_PING		PIN13	// port c
+#define SSD2_PINDot		PIN14   // port c
+
+typedef enum {
+	ZERO  = 0b00111111,
+	ONE   = 0b00000110,
+	TWO   = 0b01011011,
+	THREE = 0b01001111,
+	FOUR  = 0b01100110,
+	FIVE  = 0b01101101,
+	SIX   = 0b01111101,
+	SEVEN = 0b00000111,
+	EIGHT = 0b01111111,
+	NINE  = 0b01101111
+} SSD_Numbers;
+
+
+void SSD_vInit(void);
+
+void SSD1_vDisplayNum(u8 A_u8Num);
+
+void SSD2_vDisplayNum(u8 A_u8Num);
+
+#endif
+
+

@@ -1,0 +1,18 @@
+ #ifndef MEXTI_PRIVATE_H
+#define MEXTI_PRIVATE_H
+
+typedef struct {
+	u32 IMR   ;
+	u32 EMR   ;
+	u32 RTSR  ;
+	u32 FTSR  ;
+	u32 SWIER ;
+	u32 PR    ;
+} stMEXTIRegs_t;
+
+#define MEXTI	((volatile stMEXTIRegs_t*)(0x40013C00))
+
+/* Regster to select the Port channel for the EXTIx 
+ * You have Registers for SYSCFG_EXTICR from SYSCFG_EXTICR_ARRAY[0] to SYSCFG_EXTICR_ARRAY[3] */
+#define SYSCFG_EXTICR_ARRAY ((volatile u32*)(0x40013800 + 0x08))
+#endif // MEXTI_PRIVATE_H

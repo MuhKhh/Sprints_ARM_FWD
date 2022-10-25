@@ -1,0 +1,396 @@
+#include "STD_TYPES.h"
+#include "BIT_MATH.h"
+
+#include "GPIO_interface.h"
+#include "GPIO_private.h"
+#include "GPIO_config.h"
+
+void MGPIO_vSetPinDir(enuPort_t A_enuPinPort, enuPinNum_t A_enuPinNo, enuPinDir_t A_enuPinDir, enuPinCfg_t A_enuPinCfg) {
+	switch(A_enuPinPort) {
+		case PORTA:
+			switch(A_enuPinDir) {
+				case PIN_INPUT:
+					/* Selecting the Bits Corresponding to the pin number then clearing them */
+					CLR_BIT(MGPIOA->MODER, (2 * A_enuPinNo)    );
+					CLR_BIT(MGPIOA->MODER, (2 * A_enuPinNo) + 1);
+					switch(A_enuPinCfg) {
+						case PIN_INPUT_NOT_PULLED:
+							/* Selecting the Bits Corresponding to the pin number then clearing them */
+							CLR_BIT(MGPIOA->PUPDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOA->PUPDR, (2 * A_enuPinNo) + 1);
+						break;
+						
+						case PIN_INPUT_PULLED_UP:
+							/* Selecting the Bits Corresponding to the pin number then set the value 0b01 into them*/
+							SET_BIT(MGPIOA->PUPDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOA->PUPDR, (2 * A_enuPinNo) + 1);
+						break;
+						
+						case PIN_INPUT_PULLED_DOWN:
+							/* Selecting the Bits Corresponding to the pin number then set the value 0b10 into them */
+							CLR_BIT(MGPIOA->PUPDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOA->PUPDR, (2 * A_enuPinNo) + 1);
+						break;
+					}
+				break;
+				
+				case PIN_OUTPUT:
+					/* Selecting the Bits Corresponding to the pin number then set the value 0b01 into them */
+					SET_BIT(MGPIOA->MODER, (2 * A_enuPinNo)    );
+					CLR_BIT(MGPIOA->MODER, (2 * A_enuPinNo) + 1);
+					switch(A_enuPinCfg) {
+						case PIN_OUTPUT_PP_LOW_SPEED:
+							/* Selecting Type to be Push Pull */
+							CLR_BIT(MGPIOA->OTYPER, A_enuPinNo);
+							
+							/* Selecting Speed to be Low */
+							CLR_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_PP_MEDIUM_SPEED:
+							/* Selecting Type to be Push Pull */
+							CLR_BIT(MGPIOA->OTYPER, A_enuPinNo);
+
+							/* Selecting Speed to be Medium */
+							CLR_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo) + 1);
+
+						break;
+							
+						case PIN_OUTPUT_PP_HIGH_SPEED:
+							/* Selecting Type to be Push Pull */
+							CLR_BIT(MGPIOA->OTYPER, A_enuPinNo);							
+							
+							/* Selecting Speed to be High */
+							SET_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_PP_VERY_HIGH_SPEED:
+							/* Selecting Type to be Push Pull */
+							CLR_BIT(MGPIOA->OTYPER, A_enuPinNo);
+							
+							/* Selecting Speed to be very high */
+							SET_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_OD_LOW_SPEED:
+							/* Selecting Type to be Open Drain */
+							SET_BIT(MGPIOA->OTYPER, A_enuPinNo);
+							
+							/* Selecting Speed to be Low */
+							CLR_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_OD_MEDIUM_SPEED:
+							/* Selecting Type to be Open Drain */
+							SET_BIT(MGPIOA->OTYPER, A_enuPinNo);
+
+							/* Selecting Speed to be Medium */
+							SET_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_OD_HIGH_SPEED:
+							/* Selecting Type to be Open Drain */
+							SET_BIT(MGPIOA->OTYPER, A_enuPinNo);
+							
+							/* Selecting Speed to be High */
+							CLR_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_OD_VERY_HIGH_SPEED:
+							/* Selecting Type to be Open Drain */
+							SET_BIT(MGPIOA->OTYPER, A_enuPinNo);							
+							
+							/* Selecting Speed to be Very High */
+							SET_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOA->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+					}
+				break;
+			}
+		break;
+		
+		case PORTB:
+			switch(A_enuPinDir) {
+				case PIN_INPUT:
+					/* Selecting the Bits Corresponding to the pin number then clearing them */
+					CLR_BIT(MGPIOB->MODER, (2 * A_enuPinNo)    );
+					CLR_BIT(MGPIOB->MODER, (2 * A_enuPinNo) + 1);
+					switch(A_enuPinCfg) {
+						case PIN_INPUT_NOT_PULLED:
+							/* Selecting the Bits Corresponding to the pin number then clearing them */
+							CLR_BIT(MGPIOB->PUPDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOB->PUPDR, (2 * A_enuPinNo) + 1);
+						break;
+						
+						case PIN_INPUT_PULLED_UP:
+							/* Selecting the Bits Corresponding to the pin number then set the value 0b01 into them*/
+							SET_BIT(MGPIOB->PUPDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOB->PUPDR, (2 * A_enuPinNo) + 1);
+						break;
+						
+						case PIN_INPUT_PULLED_DOWN:
+							/* Selecting the Bits Corresponding to the pin number then set the value 0b10 into them */
+							CLR_BIT(MGPIOB->PUPDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOB->PUPDR, (2 * A_enuPinNo) + 1);
+						break;
+					}
+				break;
+				
+				case PIN_OUTPUT:
+					/* Selecting the Bits Corresponding to the pin number then set the value 0b01 into them */
+					SET_BIT(MGPIOB->MODER, (2 * A_enuPinNo)    );
+					CLR_BIT(MGPIOB->MODER, (2 * A_enuPinNo) + 1);
+					switch(A_enuPinCfg) {
+						case PIN_OUTPUT_PP_LOW_SPEED:
+							/* Selecting Type to be Push Pull */
+							CLR_BIT(MGPIOB->OTYPER, A_enuPinNo);
+							
+							/* Selecting Speed to be Low */
+							CLR_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_PP_MEDIUM_SPEED:
+							/* Selecting Type to be Push Pull */
+							CLR_BIT(MGPIOB->OTYPER, A_enuPinNo);
+
+							/* Selecting Speed to be Medium */
+							CLR_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_PP_HIGH_SPEED:
+							/* Selecting Type to be Push Pull */
+							CLR_BIT(MGPIOB->OTYPER, A_enuPinNo);							
+							
+							/* Selecting Speed to be High */
+							SET_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_PP_VERY_HIGH_SPEED:
+							/* Selecting Type to be Push Pull */
+							CLR_BIT(MGPIOB->OTYPER, A_enuPinNo);
+							
+							/* Selecting Speed to be very high */
+							SET_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_OD_LOW_SPEED:
+							/* Selecting Type to be Open Drain */
+							SET_BIT(MGPIOB->OTYPER, A_enuPinNo);
+							
+							/* Selecting Speed to be Low */
+							CLR_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_OD_MEDIUM_SPEED:
+							/* Selecting Type to be Open Drain */
+							SET_BIT(MGPIOB->OTYPER, A_enuPinNo);
+
+							/* Selecting Speed to be Medium */
+							SET_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_OD_HIGH_SPEED:
+							/* Selecting Type to be Open Drain */
+							SET_BIT(MGPIOB->OTYPER, A_enuPinNo);
+							
+							/* Selecting Speed to be High */
+							CLR_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_OD_VERY_HIGH_SPEED:
+							/* Selecting Type to be Open Drain */
+							SET_BIT(MGPIOB->OTYPER, A_enuPinNo);							
+							
+							/* Selecting Speed to be Very High */
+							SET_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOB->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+					}
+				break;
+			}
+		break;
+		
+		case PORTC:
+			switch(A_enuPinDir) {
+				case PIN_INPUT:
+					/* Selecting the Bits Corresponding to the pin number then clearing them */
+					CLR_BIT(MGPIOC->MODER, (2 * A_enuPinNo)    );
+					CLR_BIT(MGPIOC->MODER, (2 * A_enuPinNo) + 1);
+					switch(A_enuPinCfg) {
+						case PIN_INPUT_NOT_PULLED:
+							/* Selecting the Bits Corresponding to the pin number then clearing them */
+							CLR_BIT(MGPIOC->PUPDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOC->PUPDR, (2 * A_enuPinNo) + 1);
+						break;
+						
+						case PIN_INPUT_PULLED_UP:
+							/* Selecting the Bits Corresponding to the pin number then set the value 0b01 into them*/
+							SET_BIT(MGPIOC->PUPDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOC->PUPDR, (2 * A_enuPinNo) + 1);
+						break;
+						
+						case PIN_INPUT_PULLED_DOWN:
+							/* Selecting the Bits Corresponding to the pin number then set the value 0b10 into them */
+							CLR_BIT(MGPIOC->PUPDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOC->PUPDR, (2 * A_enuPinNo) + 1);
+						break;
+					}
+					break;
+				
+				case PIN_OUTPUT:
+					/* Selecting the Bits Corresponding to the pin number then set the value 0b01 into them */
+					SET_BIT(MGPIOC->MODER, (2 * A_enuPinNo)    );
+					CLR_BIT(MGPIOC->MODER, (2 * A_enuPinNo) + 1);
+					switch(A_enuPinCfg) {
+						case PIN_OUTPUT_PP_LOW_SPEED:
+							/* Selecting Type to be Push Pull */
+							CLR_BIT(MGPIOC->OTYPER, A_enuPinNo);
+							
+							/* Selecting Speed to be Low */
+							CLR_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_PP_MEDIUM_SPEED:
+							/* Selecting Type to be Push Pull */
+							CLR_BIT(MGPIOC->OTYPER, A_enuPinNo);
+
+							/* Selecting Speed to be Medium */
+							CLR_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_PP_HIGH_SPEED:
+							/* Selecting Type to be Push Pull */
+							CLR_BIT(MGPIOC->OTYPER, A_enuPinNo);							
+							
+							/* Selecting Speed to be High */
+							SET_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_PP_VERY_HIGH_SPEED:
+							/* Selecting Type to be Push Pull */
+							CLR_BIT(MGPIOC->OTYPER, A_enuPinNo);
+							
+							/* Selecting Speed to be very high */
+							SET_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_OD_LOW_SPEED:
+							/* Selecting Type to be Open Drain */
+							SET_BIT(MGPIOC->OTYPER, A_enuPinNo);
+							
+							/* Selecting Speed to be Low */
+							CLR_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_OD_MEDIUM_SPEED:
+							/* Selecting Type to be Open Drain */
+							SET_BIT(MGPIOC->OTYPER, A_enuPinNo);
+
+							/* Selecting Speed to be Medium */
+							SET_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo)    );
+							CLR_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_OD_HIGH_SPEED:
+							/* Selecting Type to be Open Drain */
+							SET_BIT(MGPIOC->OTYPER, A_enuPinNo);
+							
+							/* Selecting Speed to be High */
+							CLR_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+							
+						case PIN_OUTPUT_OD_VERY_HIGH_SPEED:
+							/* Selecting Type to be Open Drain */
+							SET_BIT(MGPIOC->OTYPER, A_enuPinNo);							
+							
+							/* Selecting Speed to be Very High */
+							SET_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo)    );
+							SET_BIT(MGPIOC->OSPEEDR, (2 * A_enuPinNo) + 1);
+						break;
+					}
+				break;
+			}
+		break;
+	}
+}
+
+
+void MGPIO_vSetPinVal(enuPort_t A_enuPinPort, enuPinNum_t A_enuPinNo, enuPinVal_t A_enuPinVal) {
+	switch(A_enuPinPort) {
+		case PORTA:
+			switch(A_enuPinVal) {
+				case PIN_HIGH: MGPIOA->BSRR = (1 <<  A_enuPinNo	     );  break;
+				case PIN_LOW:  MGPIOA->BSRR = (1 << (A_enuPinNo + 16));  break; // adding 16 to select the high bits.
+			}
+		break;
+		
+		case PORTB:
+			switch(A_enuPinVal) {
+				case PIN_HIGH: MGPIOB->BSRR = (1 <<  A_enuPinNo	     );  break;
+				case PIN_LOW:  MGPIOB->BSRR = (1 << (A_enuPinNo + 16));  break; // adding 16 to select the high bits.
+			}
+		break;
+		
+		case PORTC:
+			switch(A_enuPinVal) {
+				case PIN_HIGH: MGPIOC->BSRR = (1 <<  A_enuPinNo	     );  break;
+				case PIN_LOW:  MGPIOC->BSRR = (1 << (A_enuPinNo + 16));  break; // adding 16 to select the high bits.
+			}
+		break;
+	}
+}
+
+void MGPIO_vGetPinVal(enuPort_t A_enuPinPort, enuPinNum_t A_enuPinNo, u8 *A_pu8PinValue) {
+	switch(A_enuPinPort) {
+		case PORTA:	*A_pu8PinValue = GET_BIT(MGPIOA->IDR, A_enuPinNo);   break;
+		case PORTB: *A_pu8PinValue = GET_BIT(MGPIOB->IDR, A_enuPinNo);   break;
+		case PORTC: *A_pu8PinValue = GET_BIT(MGPIOC->IDR, A_enuPinNo);   break;
+	}
+}
+
+
+void MGPIO_vSetPortVal(enuPort_t A_enuPinPort, u16 A_u16PortValue) {
+	switch(A_enuPinPort) {
+		case PORTA: MGPIOA->ODR = A_u16PortValue;	break;
+		case PORTB: MGPIOB->ODR = A_u16PortValue;	break;
+		case PORTC: MGPIOC->ODR = A_u16PortValue;	break;
+	}
+}
+
+void MGPIO_vSet8PinsValue(enuPort_t A_enuPinsPort, enuPinsPortLevel_t A_enuPinsPortLevel, u8 A_u8PinsValue) {
+	switch(A_enuPinsPort) {
+	case PORTA:
+		switch(A_enuPinsPortLevel) {
+		case LOW_PINS : MGPIOA->ODR = (MGPIOA->ODR & 0x11111100) |  A_u8PinsValue; 		 break;
+		case HIGH_PINS: MGPIOA->ODR = (MGPIOA->ODR & 0x11110011) | (A_u8PinsValue << 8); break;
+		}
+		break;
+
+	case PORTB:
+		switch(A_enuPinsPortLevel) {
+		case LOW_PINS : MGPIOB->ODR = (MGPIOB->ODR & 0x11111100) |  A_u8PinsValue; 		 break;
+		case HIGH_PINS: MGPIOB->ODR = (MGPIOB->ODR & 0x11110011) | (A_u8PinsValue << 8); break;
+		}
+		break;
+	}
+}

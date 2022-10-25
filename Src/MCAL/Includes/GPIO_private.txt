@@ -1,0 +1,22 @@
+#ifndef MGPIO_PRIVATE_H
+#define MGPIO_PRIVATE_H
+
+typedef struct {
+	u32 MODER;
+	u32 OTYPER;
+	u32 OSPEEDR;
+	u32 PUPDR;
+	u32 IDR;
+	u32 ODR;
+	u32 BSRR;
+	u32 LCKR;
+	u32 AFRL;
+} st_MGPIORegisters;
+
+
+#define MGPIOA	((volatile st_MGPIORegisters*)0x40020000)
+#define MGPIOB	((volatile st_MGPIORegisters*)0x40020400)
+#define MGPIOC	((volatile st_MGPIORegisters*)0x40020800)
+
+
+#endif // MGPIO_PRIVATE_H

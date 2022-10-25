@@ -1,0 +1,212 @@
+#include "../include/STD_TYPES.h"
+#include "../include/BIT_MATH.h"
+
+#include "../include/NVIC_interface.h"
+#include "../include/NVIC_private.h"
+#include "../include/NVIC_config.h"
+
+static enuSystemGroupPri_t G_enuSystemGroupPri;
+
+enuErrorState_t MNVIC_enuErrorState_tSetSystemGroupPriority(enuSystemGroupPri_t A_enuSystemGroupPri) {
+	/* Creating a variable to hold the state of the behavior of the function */
+	enuErrorState_t L_retValue        = STD_OK;
+	
+	G_enuSystemGroupPri = A_enuSystemGroupPri;
+	/* Equation for validating the System Group Priority */
+	u8 L_u8ValidGroupPri = (u8)( (G_enuSystemGroupPri - PRI_16_GROUP_01_SUB) / 256);
+	
+	/* Validating the input arguments */
+	if(L_u8ValidGroupPri <= 4) {
+		MSCB_AIRCR = A_enuSystemGroupPri;
+	}
+	
+	else {
+		L_retValue = STD_NOK;
+	}
+	
+	return L_retValue;
+
+}
+
+enuErrorState_t MNVIC_EnableIRQ(enuIRQn_t A_enuIRQn) {
+	/* Creating a variable to hold the state of the behavior of the function */
+	enuErrorState_t L_retValue        = STD_OK;
+	/* Validating the input arguments */
+	if(A_enuIRQn <= NUM_OF_INTERRUPT_REQUESTS) {
+		/* Getting the Index for the ISER array for the given IRQ */
+		u8 L_u8IRQArrayIndex          = A_enuIRQn / REGISTER_BITS;
+		
+		/* Getting the Bit corresponding to the given IRQ */
+		u8 L_u8IRQCorrespondingBit    = A_enuIRQn % REGISTER_BITS;
+		
+		/* Enable the Interrupt for the given IRQ */
+		MNVIC_ISER_ARRAY[L_u8IRQArrayIndex] = (1 << (L_u8IRQCorrespondingBit));
+	}
+	
+	else {
+		L_retValue                    = STD_NOK;
+	}
+	
+	return L_retValue;
+}
+ 
+enuErrorState_t MNVIC_DisableIRQ(enuIRQn_t A_enuIRQn) {
+	/* Creating a variable to hold the state of the behavior of the function */
+	enuErrorState_t L_retValue        = STD_OK;
+	
+	/* Validating the input arguments */
+	if(A_enuIRQn <= NUM_OF_INTERRUPT_REQUESTS) {
+		/* Getting the Index for the ICER array for the given IRQ */
+		u8 L_u8IRQArrayIndex          = A_enuIRQn / REGISTER_BITS;
+		
+		/* Getting the Bit corresponding to the given IRQ */
+		u8 L_u8IRQCorrespondingBit    = A_enuIRQn % REGISTER_BITS;
+		
+		/* Enable the Interrupt for the given IRQ */
+		MNVIC_ICER_ARRAY[L_u8IRQArrayIndex] = (1 << L_u8IRQCorrespondingBit);
+	}
+	
+	else {
+		L_retValue                    = STD_NOK;
+	}
+	
+	return L_retValue;
+
+}
+
+enuErrorState_t MNVIC_SetPendingIRQ(enuIRQn_t A_enuIRQn) {
+	/* Creating a variable to hold the state of the behavior of the function */
+	enuErrorState_t L_retValue        = STD_OK;
+
+	/* Validating the input arguments */
+	if(A_enuIRQn <= NUM_OF_INTERRUPT_REQUESTS) {
+		/* Getting the Index for the ISPR array for the given IRQ */
+		u8 L_u8IRQArrayIndex          = A_enuIRQn / REGISTER_BITS;
+		
+		/* Getting the Bit corresponding to the given IRQ */
+		u8 L_u8IRQCorrespondingBit    = A_enuIRQn % REGISTER_BITS;
+		
+		/* Enable the Interrupt for the given IRQ */
+		MNVIC_ISPR_ARRAY[L_u8IRQArrayIndex] = (1 << (L_u8IRQCorrespondingBit));
+	}
+	
+	else {
+		L_retValue                    = STD_NOK;
+	}
+	
+	return L_retValue;
+
+}
+
+enuErrorState_t MNVIC_ClearPendingIRQ(enuIRQn_t A_enuIRQn) {
+	/* Creating a variable to hold the state of the behavior of the function */
+	enuErrorState_t L_retValue        = STD_OK;
+	
+
+
+	/* Validating the input arguments */
+	if(A_enuIRQn <= NUM_OF_INTERRUPT_REQUESTS) {
+		/* Getting the Index for the ICPR array for the given IRQ */
+		u8 L_u8IRQArrayIndex          = A_enuIRQn / REGISTER_BITS;
+		
+		/* Getting the Bit corresponding to the given IRQ */
+		u8 L_u8IRQCorrespondingBit    = A_enuIRQn % REGISTER_BITS;
+		
+		/* Enable the Interrupt for the given IRQ */
+		MNVIC_ICPR_ARRAY[L_u8IRQArrayIndex] = (1 << L_u8IRQCorrespondingBit);
+	}
+	
+	else {
+		L_retValue                    = STD_NOK;
+	}
+	
+	return L_retValue;
+
+}
+
+enuErrorState_t MNVIC_GetPendingIRQ(enuIRQn_t A_enuIRQn, u32 *A_pu32PendingIRQValue) {
+	/* Creating a variable to hold the state of the behavior of the function */
+	enuErrorState_t L_retValue        = STD_OK;
+	
+	/* Validating the input arguments */
+	if( ( A_enuIRQn <= NUM_OF_INTERRUPT_REQUESTS ) && ( A_pu32PendingIRQValue != NULL ) ) {
+		/* Getting the Index for the ISPR array for the given IRQ */
+		u8 L_u8IRQArrayIndex          = A_enuIRQn / REGISTER_BITS;
+		
+		/* Getting the Bit corresponding to the given IRQ */
+		u8 L_u8IRQCorrespondingBit    = A_enuIRQn % REGISTER_BITS;
+		
+		/* Enable the Interrupt for the given IRQ */
+		*A_pu32PendingIRQValue = GET_BIT( MNVIC_ISPR_ARRAY[L_u8IRQArrayIndex], L_u8IRQCorrespondingBit );
+	}
+	
+	else {
+		L_retValue                    = STD_NOK;
+	}
+	
+	return L_retValue;
+
+}
+
+
+
+enuErrorState_t MNVIC_SetPriority(enuIRQn_t A_enuIRQn, u8 A_u8GroupPri, u8 A_u8SubPri) {
+	/* Creating a variable to hold the state of the behavior of the function */
+	enuErrorState_t L_retValue        = STD_OK;
+	
+	/* Equation to determine which mode the user selected 
+	 * It will help us to validate the user input for each Group Priority and Sub Priority 
+	 * It will help us assgin the Priority value direct on the IPR Register 
+	 * Expected values are: 0, 1, 2, 3, or 4 */
+	u8 L_u8DifferenceGroupPri = (u8)( (G_enuSystemGroupPri - PRI_16_GROUP_01_SUB) / 256);
+	
+	/* Equation to validate the Group Priority 
+	 * Expected values for the Group Priority are: < (1 << (4 - Difference Group Priority)) */
+	u8 L_u8GroupPriortyValidation = (1 << (4 - L_u8DifferenceGroupPri) );
+	
+	/* Equation to validate the Sub IRQ Priority 
+	 * Expected values for the Group Priority are: < (1 << (Difference Group Priority)) */
+	u8 L_u8SubPriortyValidation = ( 1 << (L_u8DifferenceGroupPri) );
+	
+	
+	/* Validating the input arguments */
+	if ( ( A_enuIRQn    <= NUM_OF_INTERRUPT_REQUESTS  ) && 
+		 ( A_u8GroupPri <  L_u8GroupPriortyValidation ) && 
+		 ( A_u8SubPri   <  L_u8SubPriortyValidation   )    ) {
+		
+		/* Assigning the Group and Sub Priorities for the IRQ in the right position in memory! */
+		MNVIC_IPR_ARRAY[A_enuIRQn] = ( ( A_u8SubPri | (A_u8GroupPri << L_u8DifferenceGroupPri ) ) << 4);
+	
+	}
+	
+	else {
+		L_retValue     = STD_NOK;
+	}
+	
+	return L_retValue;
+	
+}
+
+enuErrorState_t MNVIC_GetPriority(enuIRQn_t A_enuIRQn, u8 *A_pu8GroupPri, u8 *A_pu8SubPri) {
+	/* Creating a variable to hold the state of the behavior of the function */
+	enuErrorState_t L_retValue = STD_OK;
+
+	/* Equation to determine which mode the user selected. 
+	 * It will help us get the Priority values for both Group and Sub from IPR Register.
+	 * Expected values are: 0, 1, 2, 3, or 4 */
+	u8 L_u8DifferenceGroupPri = (u8)( (G_enuSystemGroupPri - PRI_16_GROUP_01_SUB) / 256);
+	
+	/* Validating the input arguments */
+	if( ( A_enuIRQn <= NUM_OF_INTERRUPT_REQUESTS ) && ( A_pu8GroupPri != NULL ) && (A_pu8SubPri != NULL) ) {
+		*A_pu8GroupPri = ( MNVIC_IPR_ARRAY[A_enuIRQn] >> ( 4 + L_u8DifferenceGroupPri     ) );
+		*A_pu8SubPri   = ( (u8)( MNVIC_IPR_ARRAY[A_enuIRQn] << (4 - L_u8DifferenceGroupPri)) >> ( 8 - L_u8DifferenceGroupPri ) );
+	}
+	
+	else {
+		L_retValue = STD_NOK;
+	}
+	
+	return L_retValue;
+
+}
+

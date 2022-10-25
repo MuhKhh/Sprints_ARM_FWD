@@ -1,0 +1,62 @@
+#include "../include/STD_TYPES.h"
+#include "../include/BIT_MATH.h"
+
+#include "../include/RCC_Interface.h"
+#include "../include/GPIO_interface.h"
+#include "../include/NVIC_interface.h"
+#include "../include/EXTI_interface.h"
+#include "../include/STK_interface.h"
+
+#include "../include/SSD_interface.h"
+
+typedef enum {
+	LED_OFF,
+	LED_ON
+} LedState_t;
+
+static u32 G_u32OnPeriod;
+static u32 G_u32OffPeriod;
+
+void App_vSystickNotifactionFunction(void);
+
+void App_vSetLedToggle(u32 A_u32OnPeriod, u32 A_u32OffPeriod);
+
+int main(void) {
+	MRCC_voidInitSysClock();
+	MRCC_voidEnablePerClock(AHB1_bus, GPIOA_ID);
+
+	MGPIO_vSetPinDir(PORTA, PIN0, PIN_OUTPUT, PIN_OUTPUT_PP_LOW_SPEED);
+	MSTK_vInit();
+
+	App_vSetLedToggle(2000000, 1000000); // one tick = one micro second
+
+	while(1) {
+
+	}
+}
+
+
+void App_vSystickNotifactionFunction(void) {
+	static LedState_t L_LedState = LED_ON;
+
+	switch(L_LedState) {
+	case LED_ON:
+		MGPIO_vSetPinVal(PORTA, PIN0, PIN_HIGH);
+		MSTK_vSetIntervalSingle(G_u32OnPeriod, App_vSystickNotifactionFunction);
+		L_LedState = LED_OFF;
+		break;
+
+	case LED_OFF:
+		MGPIO_vSetPinVal(PORTA, PIN0, PIN_LOW);
+		MSTK_vSetIntervalSingle(G_u32OffPeriod, App_vSystickNotifactionFunction);
+		L_LedState = LED_ON;
+		break;
+	}
+}
+
+void App_vSetLedToggle(u32 A_u32OnPeriod, u32 A_u32OffPeriod) {
+	G_u32OnPeriod  = A_u32OnPeriod;
+	G_u32OffPeriod = A_u32OffPeriod;
+
+	App_vSystickNotifactionFunction();
+}

@@ -1,0 +1,19 @@
+#ifndef STK_PRIVATE_H
+#define STK_PRIVATE_H
+
+typedef enum {
+	SINGLE_INTERVAL   = 0,
+	PERIODIC_INTERVAL = 1,
+} enuIntervalMode_t;
+
+
+#define HWREG32(X) 	(*((volatile u32*)(X)))
+
+#define STK_CTRL	HWREG32(0xE000E010)
+#define STK_LOAD 	HWREG32(0xE000E014)
+#define STK_VALUE	HWREG32(0xE000E018)
+#define STK_CALIB	HWREG32(0xE000E01C)
+
+
+
+#endif // STK_PRIVATE_H

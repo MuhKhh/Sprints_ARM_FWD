@@ -1,0 +1,67 @@
+#ifndef MEXTI_INTERFACE_H
+#define MEXTI_INTERFACE_H
+
+typedef enum {
+	RISING_EDGE  = 0,
+	FALLING_EDGE    ,
+	ON_CHANGE       ,
+} enuSenseControl_t;
+
+typedef enum {
+	EXTI0_LINE  = 0 ,
+	EXTI1_LINE  = 1 ,
+	EXTI2_LINE  = 2 ,
+	EXTI3_LINE  = 3 ,
+	EXTI4_LINE  = 4 ,
+	EXTI5_LINE  = 5 ,
+	EXTI6_LINE  = 6 ,
+	EXTI7_LINE  = 7 ,
+	EXTI8_LINE  = 8 ,
+	EXTI9_LINE  = 9 ,
+	EXTI10_LINE = 10,
+	EXTI11_LINE = 11,
+	EXTI12_LINE = 12,
+	EXTI13_LINE = 13,
+	EXTI14_LINE = 14,
+	EXTI15_LINE = 15,
+	EXTI16_LINE = 16,
+	EXTI17_LINE = 17,
+	EXTI18_LINE = 18,
+	EXTI21_LINE = 21,
+	EXTI22_LINE = 22,
+} enuEXTILine_t;
+
+typedef enum {
+	EXTI_PORTA = 0b0000,
+	EXTI_PORTB = 0b0001,
+} enuEXTIPinPort_t;
+
+/* Select the channel of the EXTIx */
+enuErrorState_t MEXTI_enuErrorState_tSelectEXTIxPort(enuEXTILine_t A_enuEXTILine, enuEXTIPinPort_t A_enuEXTIPinPort);
+
+/* Configer the edge trigger for the EXTI. */
+enuErrorState_t MEXTI_enuErrorState_tSetSenseControl(enuEXTILine_t A_enuEXTILine, enuSenseControl_t A_enuSenseControl);
+
+/* Enable an Interrupt */
+enuErrorState_t MEXTI_enuErrorState_tInterruptEnable(enuEXTILine_t A_enuEXTILine);
+
+/* Disable an Interrupt */
+enuErrorState_t MEXTI_enuErrorState_tInterruptDisable(enuEXTILine_t A_enuEXTILine);
+
+/* Enable an Event */
+enuErrorState_t MEXTI_enuErrorState_tEventEnable(enuEXTILine_t A_enuEXTILine);
+
+/* Disable an Event */
+enuErrorState_t MEXTI_enuErrorState_tEventDisable(enuEXTILine_t A_enuEXTILine);
+
+/* Set Call Back */
+enuErrorState_t MEXTI_enuErrorState_tSetCallBack(enuEXTILine_t A_enuEXTILine, void (*A_pfCallBack)(void));
+
+/* Software Trigger */
+enuErrorState_t MEXTI_enuErrorState_tSoftwareTrigger(enuEXTILine_t A_enuEXTILine);
+
+void EXTI0_IRQHandler(void);
+void EXTI1_IRQHandler(void);
+void EXTI2_IRQHandler(void);
+
+#endif // MEXTI_INTERFACE_H

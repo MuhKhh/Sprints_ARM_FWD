@@ -1,0 +1,12 @@
+#ifndef STK_INTERFACE_H
+#define STK_INTERFACE_H
+
+void MSTK_vInit(void);
+void MSTK_vSetBusyWait(u32 A_u32Ticks);
+void MSTK_vSetIntervalSingle(u32 A_u32Ticks, void (*A_pfNotifaction)(void));
+void MSTK_vSetIntervalPeriodic(u32 A_u32Ticks, void (*A_pfNotifaction)(void));
+void MSTK_vStopInterval(void);
+u32  MSTK_u32GetElapsedTime(void);
+u32  MSTK_u32GetRemainingTime(void);
+
+#endif // STK_INTERFACE_H

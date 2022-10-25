@@ -1,0 +1,70 @@
+#ifndef MGPIO_INTERFACE_H
+#define MGPIO_INTERFACE_H
+
+/* Ports */
+typedef enum {
+	PORTA = 0,
+	PORTB,
+	PORTC
+} enuPort_t;
+
+/* Pins */
+typedef enum {
+	PIN0 = 0,
+	PIN1,
+	PIN2,
+	PIN3,
+	PIN4,
+	PIN5,
+	PIN6,
+	PIN7,
+	PIN8,
+	PIN9,
+	PIN10,
+	PIN11,
+	PIN12,
+	PIN13,
+	PIN14,
+	PIN15
+} enuPinNum_t;
+
+/* Dirctions */
+typedef enum {
+	PIN_INPUT = 0,
+	PIN_OUTPUT,
+} enuPinDir_t;
+
+typedef enum {
+	PIN_INPUT_NOT_PULLED    =   0,
+	PIN_INPUT_PULLED_UP          ,
+	PIN_INPUT_PULLED_DOWN        ,
+	PIN_OUTPUT_PP_LOW_SPEED      ,
+	PIN_OUTPUT_PP_MEDIUM_SPEED   ,
+	PIN_OUTPUT_PP_HIGH_SPEED     ,
+	PIN_OUTPUT_PP_VERY_HIGH_SPEED,
+	PIN_OUTPUT_OD_LOW_SPEED      ,
+	PIN_OUTPUT_OD_MEDIUM_SPEED   ,
+	PIN_OUTPUT_OD_HIGH_SPEED     ,
+	PIN_OUTPUT_OD_VERY_HIGH_SPEED,
+} enuPinCfg_t;
+
+typedef enum {
+	PIN_LOW = 0,
+	PIN_HIGH
+} enuPinVal_t;
+
+typedef enum {
+	LOW_PINS = 0,
+	HIGH_PINS,
+} enuPinsPortLevel_t;
+
+void MGPIO_vSetPinDir(enuPort_t A_enuPinPort, enuPinNum_t A_enuPinNo, enuPinDir_t A_enuPinDir, enuPinCfg_t A_enuPinCfg);
+
+void MGPIO_vSetPinVal(enuPort_t A_enuPinPort, enuPinNum_t A_enuPinNo, enuPinVal_t A_enuPinVal);
+
+void MGPIO_vGetPinVal(enuPort_t A_enuPinPort, enuPinNum_t A_enuPinNo, u8 *A_pu8PinValue);
+
+void MGPIO_vSetPortVal(enuPort_t A_enuPinPort, u16 A_u16PortValue);
+
+void MGPIO_vSet8PinsValue(enuPort_t A_enuPinsPort, enuPinsPortLevel_t A_enuPinsPortLevel, u8 A_u8PinsValue);
+#endif // MGPIO_INTERFACE_H

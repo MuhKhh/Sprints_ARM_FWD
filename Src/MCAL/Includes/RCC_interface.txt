@@ -1,0 +1,39 @@
+/*
+ * MRCC_Interface.h
+ *
+ *  Created on: OCT 23, 2022
+ *      Author: MuhammadKhaled
+ */
+
+#ifndef MRCC_INTERFACE_H_
+#define MRCC_INTERFACE_H_
+
+enum SysBuses {
+
+	AHB1_bus ,
+	AHB2_bus ,
+	APB1_bus ,
+	APB2_bus
+
+};
+
+typedef enum {
+	GPIOA_ID 		 = 0 ,
+	GPIOB_ID		 = 1 ,
+	GPIOC_ID         = 2 ,
+	GPIOD_ID         = 3 ,
+	GPIOH_ID         = 7 ,
+	SYSCFG_APB2_ID   = 14,
+} PerID;
+
+
+
+
+void MRCC_voidInitSysClock(void);
+
+void MRCC_voidEnablePerClock( u8 Copy_u8BusId , u8 Copy_u8PerId );
+
+void MRCC_voidDisablePerClock( u8 Copy_u8BusId , u8 Copy_u8PerId );
+
+
+#endif /* MRCC_INTERFACE_H_ */

@@ -1,0 +1,55 @@
+#ifndef MNVIC_PRIVATE_H
+#define MNVIC_PRIVATE_H
+
+#define REGISTER_BITS				(32)
+#define NUM_OF_INTERRUPT_REQUESTS   (239)
+
+typedef struct{
+
+	volatile u32 ISER    [ 32 ];
+	volatile u32 ICER    [ 32 ];
+	volatile u32 ISPR    [ 32 ];
+	volatile u32 ICPR    [ 32 ];
+	volatile u32 IAPR    [ 32 ];
+	volatile u32 RESERVED[ 32 ];
+	volatile u8 IPR      [ 128];
+
+}NVIC;
+
+#define MNVIC      ( ( volatile NVIC *)0xE000E100 )
+
+/* Configer System Group Priority Configer Register */
+#define MSCB_AIRCR 					*((volatile u32*)0xE000ED0C)
+
+/* Mirrored Address for NVIC */
+#define NVIC_BASE_ADDRESS			0xE000E100
+
+/* Interrupt Set Enable Register
+ * You have Registers for ISER from ISER_ARRAY[0] to ISER_ARRAY[7] 	*/
+#define MNVIC_ISER_ARRAY			((volatile u32*)(0xE000E100))
+
+/* Interrupt Clear Enable Register
+ * You have Registers for ICER from ICER_ARRAY[0] to ICER_ARRAY[7] 	*/
+#define MNVIC_ICER_ARRAY			((volatile u32*)(0XE000E180))
+
+/* Interrupt Set Pending Register
+ * You have Registers for ISPR from ISPR_ARRAY[0] to ISPR_ARRAY[7]  */
+#define MNVIC_ISPR_ARRAY			((volatile u32*)(0XE000E200))
+
+/* Interrupt Clear Pending Register
+ * You have Registers for ICPR from ICPR_ARRAY[0] to ICPR_ARRAY[7]  */
+#define MNVIC_ICPR_ARRAY			((volatile u32*)(0XE000E280))
+
+/* Interrupt Active Bit Register
+ * You have Registers for IABR from IABR_ARRAY[0] to IABR_ARRAY[7]  */
+#define MNVIC_IABR_ARRAY			((volatile u32*)(0xE000E300))
+
+/* Interrupt Priority Register
+ * You have Registers for IABR from IPR_ARRAY[0] to IPR_ARRAY[239]  */
+#define MNVIC_IPR_ARRAY				((volatile u8*)(0xE000E400))
+
+/* Software Trigger Interrupt */
+#define MNVIC_STIR					((volatile u32*)(0xE000EF00))
+
+
+#endif // MNVIC_PRIVATE_H

@@ -1,0 +1,105 @@
+#include "../include/STD_TYPES.h"
+#include "../include/BIT_MATH.h"
+#include "../include/STK_interface.h"
+#include "../include/STK_private.h"
+#include "../include/STK_config.h"
+
+static void (*G_pfTimerNotifaction)(void) = NULL;
+
+static enuIntervalMode_t G_enuIntervalModeFlag = SINGLE_INTERVAL;
+
+void MSTK_vInit(void) {
+	/* Clock source => AHB/8 */
+	STK_CTRL = 0x00000000; 
+}
+
+void MSTK_vSetBusyWait(u32 A_u32Ticks) {
+	/* Loading the ticks number to LOAD Register */
+	STK_LOAD = A_u32Ticks;
+	STK_VALUE = 0;
+	
+	/* Enable the Timer */
+	SET_BIT(STK_CTRL, 0);
+	
+	while(GET_BIT(STK_CTRL, 16) == 0) {
+		/* Waiting until the VALUE Register reaches zero */
+	}
+	
+	STK_LOAD = 0;
+	STK_VALUE = 0;
+	
+	/* Disable Timer */
+	CLR_BIT(STK_CTRL, 0);
+}
+
+void MSTK_vSetIntervalSingle(u32 A_u32Ticks, void (*A_pfNotifaction)(void)) {
+	/* Loading the ticks number to LOAD Register */
+	STK_LOAD = A_u32Ticks;
+	STK_VALUE = 0;
+
+	/* Enable the Timer */
+	SET_BIT(STK_CTRL, 0);
+	
+	/* Update Notifaction */
+	G_pfTimerNotifaction = A_pfNotifaction;
+	
+	/* Setting Single Mode */
+	G_enuIntervalModeFlag = SINGLE_INTERVAL;
+	
+	/* Enable Exception Request */
+	SET_BIT(STK_CTRL, 1);
+}
+
+void MSTK_vSetIntervalPeriodic(u32 A_u32Ticks, void (*A_pfNotifaction)(void)) {
+	/* Loading the ticks number to LOAD Register */
+	STK_LOAD  = A_u32Ticks;
+	STK_VALUE = 0;
+	/* Enable the Timer */
+	SET_BIT(STK_CTRL, 0);
+	
+	/* Update Notifaction */
+	G_pfTimerNotifaction = A_pfNotifaction;
+	
+	/* Setting Periodic Mode */
+	G_enuIntervalModeFlag = PERIODIC_INTERVAL;
+
+	/* Enable Exception Request */
+	SET_BIT(STK_CTRL, 1);	
+}
+
+void MSTK_vStopInterval(void) {
+	/* Disable Timer */
+	CLR_BIT(STK_CTRL, 0);
+	
+	/* Clear Counting Registers */
+	STK_LOAD  = 0;
+	STK_VALUE = 0;
+	
+	/* Disable Exception Request */
+	CLR_BIT(STK_CTRL, 1);
+}
+
+u32  MSTK_u32GetElapsedTime(void) {
+	return STK_LOAD - STK_VALUE;
+}
+
+u32  MSTK_u32GetRemainingTime(void) {
+	return STK_VALUE;
+}
+
+/* ISR */
+void SysTick_Handler(void) {
+	if(G_pfTimerNotifaction != NULL) {
+		switch(G_enuIntervalModeFlag) {
+			case SINGLE_INTERVAL:
+				MSTK_vStopInterval();
+				G_pfTimerNotifaction();
+				break;
+			case PERIODIC_INTERVAL:
+				G_pfTimerNotifaction();
+				break;
+		}
+
+	}
+}
+
